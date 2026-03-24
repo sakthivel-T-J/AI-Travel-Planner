@@ -22,9 +22,10 @@ supabase: Client = create_client(
 # Configure Gemini API
 genai.configure(api_key=GEMINI_API_KEY)
 model = genai.GenerativeModel(
-    model_name="gemini-2.0-flash-exp",
+    model_name="gemini-2.5-flash",  # Using newer model
     generation_config={
-        "temperature": DEFAULT_TEMPERATURE
+        "temperature": DEFAULT_TEMPERATURE,
+        "max_output_tokens": DEFAULT_MAX_OUTPUT_TOKENS
     }
 )
 
@@ -38,22 +39,67 @@ fallback_content = {
         # Travel Plan
             
         ## Overview
-        Here's a general guide to help you start planning your trip:
+        We're experiencing technical difficulties generating your personalized itinerary. Here's a general guide to help you start planning:
 
-        ### Getting Started
-        - Research the best time to visit based on weather and local events
-        - Check visa requirements and travel documents
-        - Look up local transportation options
-        - Consider your accommodation preferences
+        ## Day-by-Day Itinerary
 
-        ### Planning Tips
+        ### Day 1: Arrival & Orientation
+        **Morning**
+        - Arrive at destination
+        - Check into accommodation
+        - Get oriented with the area
+
+        **Afternoon**
+        - Explore nearby attractions
+        - Visit local markets or shopping areas
+        - Try local cuisine for lunch
+
+        **Evening**
+        - Dinner at a recommended restaurant
+        - Evening stroll or rest
+
+        ### Day 2: Main Attractions
+        **Morning**
+        - Visit top-rated tourist attractions
+        - Take guided tours if available
+
+        **Afternoon**
+        - Continue sightseeing
+        - Lunch at local eatery
+        - Visit museums or cultural sites
+
+        **Evening**
+        - Dinner and local entertainment
+        - Experience nightlife or cultural shows
+
+        ### Day 3: Local Experiences
+        **Morning**
+        - Explore local neighborhoods
+        - Visit markets and shops
+
+        **Afternoon**
+        - Try local activities
+        - Lunch at authentic restaurant
+        - Visit hidden gems
+
+        **Evening**
+        - Farewell dinner
+        - Prepare for departure
+
+        ## Planning Tips
         - Book accommodations in advance
         - Research local customs and etiquette
         - Check travel advisories
         - Make a list of must-see attractions
         - Consider local transportation options
 
-        ### Safety and Preparation
+        ## Budget Considerations
+        - Accommodation: Varies by preference
+        - Meals: Budget accordingly
+        - Activities: Research costs in advance
+        - Transportation: Factor in local travel
+
+        ## Safety and Preparation
         - Keep emergency contact numbers handy
         - Make copies of important documents
         - Check travel insurance options
@@ -187,100 +233,99 @@ def generate_travel_plan(travel_params):
     
     # Build enhanced prompt for Gemini
     prompt = f"""
-    Create a detailed travel itinerary in proper markdown format with clear sections and bullet points. Use the following structure:
+    Create a detailed {travel_params['days']}-day travel itinerary for {travel_params['destination']} in markdown format.
 
-    # {travel_params['destination']} Travel Plan
+    # {travel_params['destination']} - {travel_params['days']} Day Travel Plan
 
-    ## Destination Overview
-    - Brief introduction to {travel_params['destination']}
-    - Best time to visit
-    - Local currency and basic phrases
-    - Weather expectations
-
-    ## Before You Go
-    - Visa requirements
-    - Health and safety tips
-    - Packing recommendations
-    - Transportation to/from airport
-
-    ## Accommodations
-    - Recommended places to stay based on {travel_params['accommodation']} preference
-    - Location advantages
-    - Approximate rates
-    - Booking tips
+    ## Trip Overview
+    - Destination: {travel_params['destination']}
+    - Duration: {travel_params['days']} days
+    - Travelers: {travel_params['people']} people
+    - Budget: {travel_params.get('budget', 'medium')}
+    - Accommodation: {travel_params['accommodation']}
+    - Activities: {travel_params['activities']}
+    - Interests: {travel_params['interests']}
 
     ## Day-by-Day Itinerary
 
-    ### Day 1
-    - Morning activities
-      * Specific locations
-      * Timing
-      * Tips
-    - Afternoon activities
-      * Detailed stops
-      * Recommendations
-    - Evening activities
-      * Dinner options
-      * Entertainment
+    IMPORTANT: Create a detailed itinerary for EACH of the {travel_params['days']} days. For each day include:
 
-    [Continue similar format for each day]
+    ### Day 1: [Theme/Focus]
+    **Morning (8:00 AM - 12:00 PM)**
+    - Activity 1: [Specific location/attraction]
+      * Details and tips
+      * Estimated time: X hours
+      * Cost: $XX
+    - Activity 2: [Another location]
+      * Details and tips
 
-    ## Local Transportation
-    - Getting around options
-    - Costs
-    - Tips and recommendations
+    **Afternoon (12:00 PM - 6:00 PM)**
+    - Lunch: [Restaurant recommendation]
+    - Activity 3: [Specific location]
+      * Details and tips
+    - Activity 4: [Another location]
+
+    **Evening (6:00 PM - 10:00 PM)**
+    - Dinner: [Restaurant recommendation]
+    - Evening activity: [Specific location or experience]
+
+    [REPEAT THIS FORMAT FOR ALL {travel_params['days']} DAYS]
+
+    ## Accommodation Recommendations
+    - Option 1: [Hotel/Airbnb name]
+      * Location and why it's good
+      * Price range: $XX-$XX per night
+    - Option 2: [Alternative]
+    - Option 3: [Budget option]
 
     ## Dining Guide
-    - Must-try local dishes
-    - Restaurant recommendations
-      * Budget options
-      * Mid-range choices
-      * Special experiences
-    - Food safety tips
+    - Must-try dishes in {travel_params['destination']}
+    - Recommended restaurants:
+      * Budget: [Name] - [Specialty]
+      * Mid-range: [Name] - [Specialty]
+      * Fine dining: [Name] - [Specialty]
+
+    ## Transportation
+    - Getting to {travel_params['destination']}
+    - Getting around the city
+    - Estimated costs
 
     ## Budget Breakdown
-    - Daily estimates
-      * Accommodation: {travel_params['accommodation']}
-      * Meals
-      * Activities
-      * Transportation
-    - Money-saving tips
-    - Total budget range
+    - Accommodation: $XX per night x {travel_params['days']} nights
+    - Meals: $XX per day x {travel_params['days']} days
+    - Activities & Attractions: $XX total
+    - Transportation: $XX total
+    - **Total Estimated Cost: $XXX - $XXX**
 
-    ## Local Tips
-    - Cultural etiquette
-    - Safety advice
-    - Common phrases
-    - Best photo spots
+    ## Local Tips & Essentials
+    - Best time to visit
+    - Local customs and etiquette
+    - Safety tips
+    - Useful phrases
+    - Emergency contacts
 
-    Use the following details:
-    - Duration: {travel_params['days']} days
-    - Group size: {travel_params['people']} people
-    - Accommodation preference: {travel_params['accommodation']}
-    - Activities: {travel_params['activities']}
-    - Interests: {travel_params['interests']}
-    - Budget level: {travel_params.get('budget', 'Not specified')}
-
-    Additional research information:
+    Additional context from research:
     {search_info}
 
-    IMPORTANT FORMATTING RULES:
-    1. Use proper markdown headings (# for main title, ## for sections, ### for subsections)
-    2. Use bullet points (-) for all lists
-    3. Use nested bullet points (* or -) for sub-items
-    4. Add blank lines between sections
-    5. Keep content organized and easy to read
-    6. Use bold (**) for important information
-    7. Include specific details and recommendations
+    CRITICAL: You MUST create a complete day-by-day itinerary for all {travel_params['days']} days with specific activities, timings, and locations for morning, afternoon, and evening.
     """
     
     try:
         response = model.generate_content(prompt)
+        raw_text = response.text
+        
+        # DEBUG: Log if itinerary section exists in response
+        has_itinerary = "Itinerary" in raw_text or "Day" in raw_text
+        print(f"[DEBUG] AI Response length: {len(raw_text)}")
+        print(f"[DEBUG] Has Itinerary section: {has_itinerary}")
+        if not has_itinerary:
+            print(f"[DEBUG] Raw response preview: {raw_text[:500]}...")
+        
         # Save the plan to Supabase
-        saved_plan = save_travel_plan(travel_params, response.text, sources)
+        saved_plan = save_travel_plan(travel_params, raw_text, sources)
         
         # Convert markdown to HTML using the markdown library
-        html_content = format_markdown_content(response.text)
+        html_content = format_markdown_content(raw_text)
         
         return {
             "content": html_content,
@@ -288,7 +333,10 @@ def generate_travel_plan(travel_params):
             "plan_id": saved_plan['id'] if saved_plan else None
         }
     except Exception as e:
-        print(f"Gemini API Error: {e}")
+        print(f"[DEBUG] Gemini API Error: {e}")
+        print(f"[DEBUG] Error type: {type(e).__name__}")
+        print(f"[DEBUG] Full traceback: {traceback.format_exc()}")
+        print(f"[DEBUG] Returning fallback content (NO ITINERARY)")
         return fallback_content
 
 @app.route('/')
