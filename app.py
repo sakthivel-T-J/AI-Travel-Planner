@@ -250,12 +250,14 @@ def generate_travel_plan(travel_params):
 
     IMPORTANT: Create a detailed itinerary for EACH of the {travel_params['days']} days. For each day include:
 
+    - Use Indian Rupees (INR) for all cost estimates and display the currency as ₹.
+
     ### Day 1: [Theme/Focus]
     **Morning (8:00 AM - 12:00 PM)**
     - Activity 1: [Specific location/attraction]
       * Details and tips
       * Estimated time: X hours
-      * Cost: $XX
+      * Cost: ₹XX
     - Activity 2: [Another location]
       * Details and tips
 
@@ -274,10 +276,10 @@ def generate_travel_plan(travel_params):
     ## Accommodation Recommendations
     - Option 1: [Hotel/Airbnb name]
       * Location and why it's good
-      * Price range: $XX-$XX per night
+      * Price range: ₹XX-₹XX per night
     - Option 2: [Alternative]
     - Option 3: [Budget option]
-
+1
     ## Dining Guide
     - Must-try dishes in {travel_params['destination']}
     - Recommended restaurants:
@@ -291,11 +293,11 @@ def generate_travel_plan(travel_params):
     - Estimated costs
 
     ## Budget Breakdown
-    - Accommodation: $XX per night x {travel_params['days']} nights
-    - Meals: $XX per day x {travel_params['days']} days
-    - Activities & Attractions: $XX total
-    - Transportation: $XX total
-    - **Total Estimated Cost: $XXX - $XXX**
+    - Accommodation: ₹XX per night x {travel_params['days']} nights
+    - Meals: ₹XX per day x {travel_params['days']} days
+    - Activities & Attractions: ₹XX total
+    - Transportation: ₹XX total
+    - **Total Estimated Cost: ₹XXX - ₹XXX**
 
     ## Local Tips & Essentials
     - Best time to visit
